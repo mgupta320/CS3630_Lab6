@@ -1,3 +1,5 @@
+import asyncio
+
 import cozmo
 import threading
 import json
@@ -34,11 +36,27 @@ async def CozmoPID(robot: cozmo.robot.Robot):
         disturbance = int(sys.argv[1])
         
     ###############################
-    # PLEASE ENTER YOUR CODE BELOW
+    # Look for Cube, orient towards cube, determine distance from cube
+    cube = robot.world.wait_until_observe_num_objects(num=1, object_type=cozmo.objects.LightCube, timeout=60)
+    cube = cube[0]
+
+    goal = cube.pose.position.x - 20
     ###############################
 
     # set start_time after Cozmo detects a cube
     start_time = time.time()
+    time_step = .05
+    prev_error = goal - robot.pose.position.x
+    total_error = 0
+    while True:
+        curr_error = goal - robot.pose.position.x
+        total_error = total_error + curr_error * time_step
+        dt_error = (curr_error - prev_error) / time_step
+        compensated = kp * curr_error + ki * total_error + kd * dt_error
+        print(compensated)
+        move(robot, compensated, compensated)
+        await asyncio.sleep(.05)
+        prev_error = curr_error
 
 
 class RobotThread(threading.Thread):

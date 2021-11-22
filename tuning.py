@@ -14,7 +14,7 @@ def create_config_file(values):
 
 async def CozmoTuning(robot: cozmo.robot.Robot):
     global stopevent
-    tuning_values = {"kp": 0, "ki": 0, "kd": 0}
+    tuning_values = {"kp": 50, "ki": 0, "kd": 50}
     ###############################
     # PLEASE ENTER YOUR CODE BELOW
     ###############################
